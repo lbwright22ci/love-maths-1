@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function(){
     for(let button of buttons){
         button.addEventListener('click', function(){
             if(this.getAttribute("data-type") === "submit"){
-                alert("You clicked submit");
+                checkAnswer();
             } else{
                 let gameType = this.getAttribute("data-type");
                 runGame(gameType);
@@ -24,18 +24,59 @@ function runGame(gameType){
 
     if(gameType ==="addition"){
         displayAdditionQuestion(num1, num2);
-    }else{
+    }else if(gameType ==="subtract"){
+        if(num1 > num2){
+            displaySubtractQuestion(num1, num2);
+        }else{
+            displaySubtractQuestion(num2, num1);
+        }
+    }else if(gameType==='multiply'){
+        displayMultiplyQuestion(num1, num2);
+    }
+    else{
         alert(`The ${gameType} game is not working yet`);
         throw `Unknown game type : ${gameType}. Aborting!`;
     }
 
 }
-
+/**
+ * function which compares answer input by the user with the correct calculated answer.
+ * reads input from the DOM from user
+ */
 function checkAnswer(){
+    let userAnswer = parseInt(document.getElementById("answer-box").value);
+    let calculatedAnswer = calculateCorrectAnswer();
+    let isCorrect = userAnswer === calculatedAnswer[0];
 
+    if(isCorrect){
+        alert("Hey! You got it right! :D")
+    }
+    else{
+        alert(`aww you answered ${userAnswer} and the correct answer is ${calculatedAnswer[0]}`);
+    }
+
+    runGame(calculatedAnswer[1]);
 }
 
+/**
+ * function to calculate the correct answer by reading input values from DOM
+ */
 function calculateCorrectAnswer(){
+    let operand1 = parseInt(document.getElementById("operand1").innerText);
+    let operand2 = parseInt(document.getElementById("operand2").innerText);
+    let operator = document.getElementById("operator").innerText;
+    
+    if(operator ==="+"){
+        return [operand1+operand2, "addition"];
+    } else if(operator ==="-"){
+        return [operand1 - operand2, "subtract"];
+    } else if(operator ==="x"){
+        return [operand1*operand2, "multiply"];
+    }
+    else{
+        alert(`Unrecognised operator ${operator}`);
+        throw `unrecognised operator ${operator}. Aborting!`;
+    }
 
 }
 
@@ -53,10 +94,14 @@ function displayAdditionQuestion(operand1,operand2){
     document.getElementById("operator").textContent= "+";
 }
 
-function displaySubtractQuestion(){
-
+function displaySubtractQuestion(operand1, operand2){
+    document.getElementById("operand1").textContent= operand1;
+    document.getElementById("operand2").textContent= operand2;
+    document.getElementById("operator").textContent= "-";
 }
 
-function displayMultiplyQuestion(){
-
+function displayMultiplyQuestion(operand1, operand2){
+    document.getElementById("operand1").textContent= operand1;
+    document.getElementById("operand2").textContent= operand2;
+    document.getElementById("operator").textContent= "x";
 }
